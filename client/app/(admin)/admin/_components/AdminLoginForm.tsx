@@ -4,9 +4,8 @@ import { useState } from "react";
 
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import Image from "next/image";
-import loadingSpinner from "@/public/loading-spinner.svg";
 import Spinner from "@/components/ui/Spinner";
+import { useRouter } from "next/navigation";
 
 export default function AdminLoginForm() {
   const [username, setUsername] = useState<string>("");
@@ -14,6 +13,8 @@ export default function AdminLoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+
+  const router = useRouter();
 
   const validateUsername = (): boolean => {
     if (username.trim() === "") {
@@ -48,11 +49,30 @@ export default function AdminLoginForm() {
       return;
     }
 
-    setLoading(true);
-    const timeout = setTimeout(() => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        // Handle successful login
+        console.log("Login successful:", data);
+
+        router.push("/dashboard");
+      } else {
+        // Handle login error
+        console.error("Login failed:", data);
+      }
+    } catch (error) {
+      console.error("An error occurred during login:", error);
+    } finally {
       setLoading(false);
-      clearTimeout(timeout);
-    }, 2000);
+    }
   };
   return (
     <>
