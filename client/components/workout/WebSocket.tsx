@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 
-import { wsSender } from "@/helper/utils";
+import { wsSender } from "@/utils/utils";
 
 export default function WebSocketPage() {
   const wsRef = useRef<WebSocket | null>(null);

@@ -1,6 +1,6 @@
 "use client";
 
-import { titleCase } from "@/helper/utils";
+import { titleCase } from "@/utils/utils";
 import { error } from "console";
 
 type InputProps = {

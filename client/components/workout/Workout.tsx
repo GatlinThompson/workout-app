@@ -1,125 +1,70 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Lift, SuperSet } from "@/types/lifts";
 import { getTodayWorkout } from "@/lib/supabase/utils/lifts";
+import { isSuperSet } from "@/utils/utils";
+import Loading from "../ui/loading/Loading";
 
-const isSuperSet = (lift: Lift | SuperSet): lift is SuperSet => {
-  return (lift as SuperSet).superset !== undefined;
-};
+export default async function Workout() {
+  const lifts = await getTodayWorkout();
 
-export default function Workout() {
-  const [workout, setWorkout] = useState<Lift[]>([]);
-
-  const getWorkout = async () => {
-    const workout = await getTodayWorkout();
-
-    if (workout) {
-      setWorkout(workout);
-    }
-  };
-
-  useEffect(() => {
-    //gets todays workout
-    getWorkout();
-
-    const supabase = createClient();
-
-    const channel = supabase.channel("workouts:changes");
-
-    channel
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "workouts" },
-        (payload) => {
-          console.log(payload);
-        }
-      )
-      .subscribe();
-
-    channel
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "workouts" },
-        (payload) => {
-          console.log(payload);
-        }
-      )
-      .subscribe();
-
-    channel
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "workouts" },
-        (payload) => {
-          console.log(payload);
-        }
-      )
-      .subscribe();
-
-    channel
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "workouts" },
-        (payload) => {
-          console.log(payload);
-        }
-      )
-      .subscribe();
-  }, []);
+  if (!lifts) {
+    return <p>No lifts available</p>;
+  }
 
   return (
     <>
-      <table className="table-fixed w-full border-spacing-2 border border-gray-400">
-        <thead>
-          <tr className="">
-            <th className="p-1 border border-gray-400 text-left">Exercise</th>
-            <th className="p-1 border border-gray-400">Reps</th>
-            <th className="p-1 border border-gray-400">Tempo</th>
-          </tr>
-        </thead>
-        <tbody>
-          {workout.map((lift: Lift | SuperSet) => {
-            console.log(workout);
-            if (isSuperSet(lift)) {
-              return <SuperSetComponent key={lift.id} {...lift} />;
-            } else {
-              return <LiftComponent key={lift.id} {...lift} />;
-            }
-          })}
-        </tbody>
-      </table>
+      <div className="bg-secondary rounded-lg  shadow-md  overflow-hidden">
+        <table className="table-fixed w-full">
+          <col className="w-full" />
+          <col className="w-[250px]" />
+          <col className="w-[250px]" />
+          <thead className="bg-primary text-white">
+            <tr className="bg-primary py-3">
+              <th className="text-3xl text-left ps-3 py-2">Exercise</th>
+              <th className="text-3xl text-left py-2">Reps</th>
+              <th className="text-3xl text-left py-2 ">Tempo</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lifts.map((lift: Lift | SuperSet, i) => {
+              if (isSuperSet(lift)) {
+                return <SuperSetComponent key={lift.id} {...lift} />;
+              } else {
+                return <LiftComponent key={lift.id} {...lift} />;
+              }
+            })}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
 
-function SuperSetComponent(superset: SuperSet) {
+export function SuperSetComponent(superset: SuperSet) {
   return (
-    <tr>
-      <td className="flex flex-row text-left">
-        <span className="font-bold">SS</span>
+    <tr className={`border-t border-dark-gray`}>
+      <td className="flex flex-row text-left ps-3">
+        <span className="font-bold text-xl col text-red-orange">SS</span>
         <ul className="pt-3 pl-3">
           {superset.superset.map((lift) => (
-            <li key={lift.id} className="ml-1">
+            <li key={lift.id} className="ml-1 font-semibold text-lg">
               {lift.excercise}
             </li>
           ))}
         </ul>
       </td>
-      <td className="border p-1">
-        <ul className="pt-3 pl-3">
+      <td className=" p-1 font-semibold text-lg">
+        <ul className="pt-3 ">
           {superset.superset.map((lift) => (
-            <li key={lift.id} className="ml-1">
+            <li key={lift.id} className="ml-1 font-semibold text-lg">
               {lift.reps}
             </li>
           ))}
         </ul>
       </td>
-      <td className="border p-1">
-        <ul className="pt-3 pl-3">
+      <td className=" p-1 font-semibold text-lg">
+        <ul className="pt-3 ">
           {superset.superset.map((lift) => (
-            <li key={lift.id} className="ml-1">
+            <li key={lift.id} className="ml-1 font-semibold text-lg">
               {lift.tempo}
             </li>
           ))}
@@ -129,17 +74,22 @@ function SuperSetComponent(superset: SuperSet) {
   );
 }
 
-function LiftComponent(lift: Lift) {
+type LiftComponentProps = {
+  lift: Lift;
+  isLast?: boolean;
+};
+
+export function LiftComponent(lift: Lift) {
   console.log(lift);
   return (
-    <tr>
-      <td className="border p-1">
-        <h3 className="text-left">{lift.excercise}</h3>
+    <tr className="border-t border-dark-gray">
+      <td className="py-2 px-3">
+        <h3 className="text-left font-semibold text-lg">{lift.excercise}</h3>
       </td>
-      <td className="border p-1">
+      <td className=" p-1 font-semibold text-lg">
         <p>{lift.reps}</p>
       </td>
-      <td className="border p-1">
+      <td className=" p-1 font-semibold text-lg">
         <p>{lift.tempo}</p>
       </td>
     </tr>

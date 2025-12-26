@@ -16,7 +16,7 @@ export default function Button({
   className,
 }: ButtonProps) {
   return (
-    <div className={`w-full text-center ${className}`}>
+    <div className={`text-center ${className}`}>
       <button
         onClick={onClick}
         type={type}

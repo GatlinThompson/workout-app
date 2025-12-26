@@ -21,6 +21,12 @@ router.get("/", (req, res) => {
   res.send(workout);
 });
 
+router.get("/time", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+});
+
 router.use("/auth", authRouter);
 router.use("/lift", liftRouter);
 export default router;

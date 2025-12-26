@@ -14,6 +14,7 @@ export default function AdminLoginForm() {
   const [loading, setLoading] = useState<boolean>(false);
   const [usernameError, setUsernameError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
 
   const router = useRouter();
 
@@ -52,23 +53,6 @@ export default function AdminLoginForm() {
 
     try {
       setLoading(true);
-      // const response = await fetch("/api/login", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ username, password }),
-      // });
-      // const data = await response.json();
-      // if (response.ok) {
-      //   // Handle successful login
-      //   console.log("Login successful:", data);
-
-      //   router.push("/dashboard");
-      // } else {
-      //   // Handle login error
-      //   console.error("Login failed:", data);
-      // }
 
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithPassword({
@@ -77,17 +61,22 @@ export default function AdminLoginForm() {
       });
 
       if (!error) {
-        router.push("/");
+        router.push("/dashboard");
+        return;
+      } else {
+        setLoginError(error.message);
       }
+      setLoading(false);
     } catch (error) {
       console.error("An error occurred during login:", error);
-    } finally {
+      setLoginError("An error occurred during login:");
       setLoading(false);
     }
   };
   return (
     <>
       <h1 className="text-3xl font-bold">Login</h1>
+      {loginError && <p className="text-red-500">{loginError}</p>}
       <form onSubmit={handleSubmit} className="grid gap-5">
         <Input
           title="username"

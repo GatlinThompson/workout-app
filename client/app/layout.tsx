@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import "./ui/globals.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Roman Fitness",
@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={` antialiased`}>{children}</body>
+      <body className={`antialiased`}>{children}</body>
     </html>
   );
 }

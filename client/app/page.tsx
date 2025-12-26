@@ -1,12 +1,18 @@
 import Main from "@/components/layout/Main";
+import loading from "./loading";
 import WebSocketPage from "@/components/workout/WebSocket";
 import Workout from "@/components/workout/Workout";
+import { Suspense } from "react";
+import Loading from "./loading";
+import WorkoutHeader from "@/components/workout/WorkoutHeader";
 
 export default function Home() {
   return (
-    <Main>
-      <Workout />
-      <WebSocketPage />
-    </Main>
+    <Suspense fallback={<Loading />}>
+      <Main>
+        <WorkoutHeader />
+        <Workout />
+      </Main>
+    </Suspense>
   );
 }
