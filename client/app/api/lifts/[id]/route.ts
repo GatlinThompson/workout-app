@@ -295,3 +295,88 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest, context: RouteContext) {
+  try {
+    const { id } = await context.params;
+    const supabase = await createClient();
+    // Verify workout exists
+    const { data: existingWorkout, error: workoutCheckError } = await supabase
+      .from("workouts")
+      .select("id")
+      .eq("id", id)
+      .single();
+    if (workoutCheckError || !existingWorkout) {
+      return NextResponse.json({ error: "Workout not found" }, { status: 404 });
+    }
+
+    const { data: existingLifts, error: liftsFetchError } = await supabase
+      .from("workout_lifts")
+      .select("lift")
+      .eq("workout", id);
+
+    if (liftsFetchError) {
+      console.error("Error fetching lifts for workout:", liftsFetchError);
+      return NextResponse.json(
+        { error: "Failed to fetch lifts for workout" },
+        { status: 500 }
+      );
+    }
+    const liftIds = (existingLifts || []).map((wl: any) => wl.lift);
+    if (liftIds.length > 0) {
+      // First get superset IDs from lifts
+      const { data: liftsData } = await supabase
+        .from("lifts")
+        .select("id, superset")
+        .in("id", liftIds);
+
+      const supersetIds = (liftsData || [])
+        .filter((l: any) => l.superset)
+        .map((l: any) => l.superset);
+      // Delete main lifts
+      const { error: deleteLiftsError } = await supabase
+        .from("lifts")
+        .delete()
+        .in("id", liftIds);
+      if (deleteLiftsError) {
+        console.error("Error deleting lifts:", deleteLiftsError);
+        return NextResponse.json(
+          { error: "Failed to delete lifts" },
+          { status: 500 }
+        );
+      }
+      // Delete superset lifts
+      if (supersetIds.length > 0) {
+        const { error: deleteSupersetsError } = await supabase
+          .from("lifts")
+          .delete()
+          .in("id", supersetIds);
+        if (deleteSupersetsError) {
+          console.error("Error deleting superset lifts:", deleteSupersetsError);
+          return NextResponse.json(
+            { error: "Failed to delete superset lifts" },
+            { status: 500 }
+          );
+        }
+      }
+    }
+    // Delete the workout
+    const { error: deleteWorkoutError } = await supabase
+      .from("workouts")
+      .delete()
+      .eq("id", id);
+    if (deleteWorkoutError) {
+      console.error("Error deleting workout:", deleteWorkoutError);
+      return NextResponse.json(
+        { error: "Failed to delete workout" },
+        { status: 500 }
+      );
+    }
+  } catch (error) {
+    console.error("DELETE /lifts/[id] unexpected error:", error);
+    return NextResponse.json(
+      { error: "Failed to process DELETE request" },
+      { status: 500 }
+    );
+  }
+}
