@@ -16,11 +16,36 @@ type LiftInputValue = LiftFields & {
 
 const emptyLift: LiftFields = { exercise: "", reps: "", tempo: "" };
 
-export default function LiftInput({ sequence }: { sequence: number }) {
-  const [superSetEnabled, setSuperSetEnabled] = useState(false);
-  const [liftObject, setLiftObject] = useState<LiftInputValue>({
-    ...emptyLift,
-    superSet: null,
+type Props = {
+  sequence: number;
+  initialData?: {
+    lift: LiftInputValue;
+  };
+};
+
+export default function LiftInput({ sequence, initialData }: Props) {
+  const [superSetEnabled, setSuperSetEnabled] = useState(
+    !!initialData?.lift?.superSet
+  );
+  const [liftObject, setLiftObject] = useState<LiftInputValue>(() => {
+    if (initialData?.lift) {
+      return {
+        exercise: initialData.lift.exercise || "",
+        reps: initialData.lift.reps || "",
+        tempo: initialData.lift.tempo || "",
+        superSet: initialData.lift.superSet
+          ? {
+              exercise: initialData.lift.superSet.exercise || "",
+              reps: initialData.lift.superSet.reps || "",
+              tempo: initialData.lift.superSet.tempo || "",
+            }
+          : null,
+      };
+    }
+    return {
+      ...emptyLift,
+      superSet: null,
+    };
   });
 
   // Keep liftObject.superSet in sync with the checkbox

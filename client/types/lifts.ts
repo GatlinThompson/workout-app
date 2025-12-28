@@ -1,6 +1,6 @@
 export type Lift = {
   id: number;
-  excercise: string;
+  exercise: string;
   reps: string;
   tempo: string;
 };

@@ -47,7 +47,7 @@ export function SuperSetComponent(superset: SuperSet) {
         <ul className="pt-3 pl-3">
           {superset.superset.map((lift) => (
             <li key={lift.id} className="ml-1 font-semibold text-lg">
-              {lift.excercise}
+              {lift.exercise}
             </li>
           ))}
         </ul>
@@ -80,11 +80,10 @@ type LiftComponentProps = {
 };
 
 export function LiftComponent(lift: Lift) {
-  console.log(lift);
   return (
     <tr className="border-t border-dark-gray">
       <td className="py-2 px-3">
-        <h3 className="text-left font-semibold text-lg">{lift.excercise}</h3>
+        <h3 className="text-left font-semibold text-lg">{lift.exercise}</h3>
       </td>
       <td className=" p-1 font-semibold text-lg">
         <p>{lift.reps}</p>

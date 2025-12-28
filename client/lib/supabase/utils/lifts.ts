@@ -31,13 +31,13 @@ export const getTodayWorkout = async (): Promise<
             superset: [
               {
                 id: item.lift.id,
-                excercise: item.lift.excercise,
+                exercise: item.lift.exercise,
                 reps: item.lift.reps,
                 tempo: item.lift.tempo,
               },
               {
                 id: item.lift.superset.id,
-                excercise: item.lift.superset.excercise,
+                exercise: item.lift.superset.exercise,
                 reps: item.lift.superset.reps,
                 tempo: item.lift.superset.tempo,
               },
@@ -46,7 +46,7 @@ export const getTodayWorkout = async (): Promise<
         } else {
           return {
             id: item.lift.id,
-            excercise: item.lift.excercise,
+            exercise: item.lift.exercise,
             reps: item.lift.reps,
             tempo: item.lift.tempo,
           };

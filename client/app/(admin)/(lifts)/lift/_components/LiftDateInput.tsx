@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 
-export default function LiftDateInput({
-  initialDate,
-}: {
+type Props = {
   initialDate?: string;
-}) {
-  const [date, setDate] = useState<Date>(new Date());
+};
+
+export default function LiftDateInput({ initialDate }: Props) {
+  const [date, setDate] = useState<Date>(
+    initialDate ? new Date(initialDate) : new Date()
+  );
 
   const formatDate = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {

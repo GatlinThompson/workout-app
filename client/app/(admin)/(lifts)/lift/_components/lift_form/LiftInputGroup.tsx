@@ -4,15 +4,29 @@ import Button from "@/components/ui/Button";
 import LiftInput from "./LiftInput";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { i } from "framer-motion/client";
 
-type LiftRow = { id: string };
+type LiftRow = { id: string; data?: any };
 
 const makeId = () => crypto.randomUUID();
 
-export default function LiftInputGroup() {
-  const [lifts, setLifts] = useState<LiftRow[]>([{ id: makeId() }]);
+type Props = {
+  initialLifts?: any[];
+};
+
+export default function LiftInputGroup({ initialLifts }: Props) {
+  const [removedLiftIds, setRemovedLiftIds] = useState<number[]>([]);
+  const [lifts, setLifts] = useState<LiftRow[]>(() => {
+    if (initialLifts && initialLifts.length > 0) {
+      return initialLifts.map((lift) => ({ id: lift.lift.id, data: lift }));
+    }
+    return [{ id: makeId() }];
+  });
 
   const removeLift = (id: string) => {
+    if (initialLifts && initialLifts.length > 0) {
+      setRemovedLiftIds([...removedLiftIds, parseInt(id)]);
+    }
     setLifts((prev) => prev.filter((l) => l.id !== id));
   };
 
@@ -32,7 +46,14 @@ export default function LiftInputGroup() {
   };
 
   return (
-    <div className="">
+    <div>
+      {initialLifts && initialLifts.length > 0 && (
+        <input
+          type="hidden"
+          name="removed_lifts"
+          value={JSON.stringify(removedLiftIds)}
+        />
+      )}
       <AnimatePresence initial={false}>
         <motion.div layout transition={{ duration: 0.2, ease: "easeInOut" }}>
           {lifts.map((lift, index) => (
@@ -81,7 +102,7 @@ export default function LiftInputGroup() {
                     </Button>
                   )}
                 </div>
-                <LiftInput sequence={index + 1} />
+                <LiftInput sequence={index + 1} initialData={lift.data} />
               </div>
             </motion.div>
           ))}

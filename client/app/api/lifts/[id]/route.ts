@@ -17,7 +17,6 @@ type LiftInput = {
 
 function isValidDateString(value: unknown) {
   if (typeof value !== "string") return false;
-  // Accept YYYY-MM-DD (recommended) or ISO; tighten if you want only YYYY-MM-DD
   const d = new Date(value);
   return !Number.isNaN(d.getTime());
 }
@@ -30,7 +29,6 @@ function normalizeLifts(raw: unknown): LiftInput[] {
   if (!Array.isArray(raw)) return [];
 
   const parsed: LiftInput[] = raw.map((item) => {
-    // Support either objects OR JSON strings coming from the client
     if (typeof item === "string") {
       try {
         return JSON.parse(item);
@@ -62,36 +60,21 @@ function normalizeLifts(raw: unknown): LiftInput[] {
           : null,
       },
     }));
-  // .filter(
-  //   (x) =>
-  //     x.lift.exercise &&
-  //     x.lift.reps &&
-  //     x.lift.tempo !== "" &&
-  //     (!x.lift.superSet ||
-  //       (x.lift.superSet.exercise &&
-  //         x.lift.superSet.reps &&
-  //         x.lift.superSet.tempo !== ""))
-  // );
 }
 
-export async function GET() {
-  // Keep GET simple for testing
-  const lifts = [
-    { id: 1, name: "Bench Press", reps: "3x10", tempo: "2-0-1" },
-    { id: 2, name: "Squats", reps: "4x8", tempo: "3-1-1" },
-    { id: 3, name: "Deadlift", reps: "5x5", tempo: "2-0-2" },
-  ];
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
 
-  return NextResponse.json({ workout: lifts }, { status: 200 });
-}
-
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   try {
+    const { id } = await context.params;
     const body = await request.json();
     const date = body?.date;
     const liftsRaw = body?.lifts;
+    const removedLiftsRaw = body?.removed_lifts;
 
-    //Validate Data before proceeding
+    // Validate data
     if (!isValidDateString(date)) {
       return NextResponse.json(
         { error: "Invalid or missing date" },
@@ -108,6 +91,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const removedLifts = JSON.parse(removedLiftsRaw || "[]");
+
+    console.log("Removed Lifts:", removedLifts);
+
     const seqSet = new Set(lifts.map((l) => l.sequence));
     if (seqSet.size !== lifts.length) {
       return NextResponse.json(
@@ -116,49 +103,95 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Proceed with database operations
     const supabase = await createClient();
 
-    //Check if workout for date already exists
-    const { data: existingWorkout, error: existingError } = await supabase
+    // Verify workout exists
+    const { data: existingWorkout, error: workoutCheckError } = await supabase
       .from("workouts")
       .select("id")
-      .eq("workout_date", date);
-
-    console.log(existingWorkout);
-    if (existingError) {
-      console.error("Error checking existing workout:", existingError);
-      return NextResponse.json(
-        { error: "Failed to check existing workout" },
-        { status: 500 }
-      );
-    } else if (existingWorkout && existingWorkout.length > 0) {
-      return NextResponse.json(
-        { error: "Workout for this date already exists" },
-        { status: 400 }
-      );
-    }
-
-    // Insert workout
-    const { data: workout, error: workoutError } = await supabase
-      .from("workouts")
-      .insert({ workout_date: date })
-      .select("id")
+      .eq("id", id)
       .single();
 
-    if (workoutError || !workout) {
-      console.error("Workout insert error:", workoutError);
+    if (workoutCheckError || !existingWorkout) {
+      return NextResponse.json({ error: "Workout not found" }, { status: 404 });
+    }
+
+    // Update the workout date
+    const { error: updateWorkoutError } = await supabase
+      .from("workouts")
+      .update({ workout_date: date })
+      .eq("id", id);
+
+    if (updateWorkoutError) {
+      console.error("Error updating workout:", updateWorkoutError);
       return NextResponse.json(
-        { error: "Failed to create workout" },
+        { error: "Failed to update workout" },
         { status: 500 }
       );
     }
 
-    // Separate lifts into normal and supersets
+    // Get existing workout_lifts to find lift IDs to delete
+    const { data: oldWorkoutLifts, error: fetchError } = await supabase
+      .from("workout_lifts")
+      .select("lift")
+      .eq("workout", id);
+
+    if (fetchError) {
+      console.error("Error fetching old lifts:", fetchError);
+      return NextResponse.json(
+        { error: "Failed to fetch existing lifts" },
+        { status: 500 }
+      );
+    }
+
+    const oldLiftIds = (oldWorkoutLifts || []).map((wl: any) => wl.lift);
+
+    // Delete old workout_lifts entries
+    const { error: deleteJoinError } = await supabase
+      .from("workout_lifts")
+      .delete()
+      .eq("workout", id);
+
+    if (deleteJoinError) {
+      console.error("Error deleting old workout_lifts:", deleteJoinError);
+      return NextResponse.json(
+        { error: "Failed to delete old workout lifts" },
+        { status: 500 }
+      );
+    }
+
+    // Delete old lift entries (and their associated supersets)
+    if (oldLiftIds.length > 0) {
+      // First get superset IDs from old lifts
+      const { data: oldLifts } = await supabase
+        .from("lifts")
+        .select("id, superset")
+        .in("id", oldLiftIds);
+
+      const supersetIds = (oldLifts || [])
+        .filter((l: any) => l.superset)
+        .map((l: any) => l.superset);
+
+      // Delete main lifts
+      const { error: deleteLiftsError } = await supabase
+        .from("lifts")
+        .delete()
+        .in("id", oldLiftIds);
+
+      if (deleteLiftsError) {
+        console.error("Error deleting old lifts:", deleteLiftsError);
+      }
+
+      // Delete superset lifts
+      if (supersetIds.length > 0) {
+        await supabase.from("lifts").delete().in("id", supersetIds);
+      }
+    }
+
+    // Insert new lifts (same logic as POST)
     const normalLifts = lifts.filter((l) => !l.lift.superSet);
     const supersetMainLifts = lifts.filter((l) => !!l.lift.superSet);
 
-    // Set up to collect workout_lifts entries
     let workoutLiftRows: { workout: number; lift: number; sequence: number }[] =
       [];
 
@@ -184,18 +217,16 @@ export async function POST(request: NextRequest) {
 
       workoutLiftRows.push(
         ...insertedNormals.map((row, i) => ({
-          workout: workout.id,
+          workout: parseInt(id),
           lift: row.id,
           sequence: normalLifts[i].sequence,
         }))
       );
     }
 
-    // Set up superset lifts
     for (const lift of supersetMainLifts) {
       const ss = lift.lift.superSet!;
 
-      //insert superset lift first
       const { data: ssRow, error: ssError } = await supabase
         .from("lifts")
         .insert({
@@ -214,7 +245,6 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // insert main lift pointing to superset
       const { data: mainRow, error: mainError } = await supabase
         .from("lifts")
         .insert({
@@ -235,7 +265,7 @@ export async function POST(request: NextRequest) {
       }
 
       workoutLiftRows.push({
-        workout: workout.id,
+        workout: parseInt(id),
         lift: mainRow.id,
         sequence: lift.sequence,
       });
@@ -254,13 +284,13 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { message: "Workout created", workoutId: workout.id },
-      { status: 201 }
+      { message: "Workout updated", workoutId: id },
+      { status: 200 }
     );
   } catch (error) {
-    console.error("POST /workouts unexpected error:", error);
+    console.error("PUT /lifts/[id] unexpected error:", error);
     return NextResponse.json(
-      { error: "Failed to process POST request" },
+      { error: "Failed to process PUT request" },
       { status: 500 }
     );
   }
