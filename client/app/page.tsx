@@ -5,6 +5,7 @@ import Workout from "@/components/workout/Workout";
 import { Suspense } from "react";
 import Loading from "./loading";
 import WorkoutHeader from "@/components/workout/WorkoutHeader";
+import GlassContainer from "@/components/ui/GlassContainer";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
       <Main>
         <WorkoutHeader />
         <Workout />
+        <GlassContainer>a</GlassContainer>
       </Main>
     </Suspense>
   );

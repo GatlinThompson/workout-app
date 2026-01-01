@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 135deg;
+  inherits: false;
+}
+
 :root {
   --primary: #232325;
   --secondary: #2a2a2e;
@@ -19,9 +25,28 @@
 }
 
 body {
-  font-family: var(--font-sans);
   background-color: var(--color-background);
+  background: linear-gradient(
+    var(--angle),
+    #140505 0%,
+    #0d0b10 45%,
+    #050407 100%
+  );
+  font-family: var(--font-sans);
   color: var(--color-foreground);
   margin: 0;
   padding: 0;
+
+  min-height: 100vh;
+  min-width: 100vw;
+  animation: rotateGradient 40s linear infinite;
+}
+
+@keyframes rotateGradient {
+  0% {
+    --angle: 0deg;
+  }
+  100% {
+    --angle: 360deg;
+  }
 }
