@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+
 @import "tailwindcss";
 
 @property --angle {
@@ -13,6 +15,9 @@
   --dark-gray: #353538;
   --background: #19191b;
   --red-orange: #ff4500;
+  --light-gray: #6b6b6d;
+
+  --font-montserrat: "Montserrat", sans-serif;
 }
 
 @theme {
@@ -22,6 +27,8 @@
   --color-dark-gray: var(--dark-gray);
   --color-background: var(--background);
   --color-red-orange: var(--red-orange);
+  --color-light-gray: var(--light-gray);
+  --font-montserrat: var(--font-montserrat);
 }
 
 body {
@@ -32,7 +39,7 @@ body {
     #0d0b10 45%,
     #050407 100%
   );
-  font-family: var(--font-sans);
+
   color: var(--color-foreground);
   margin: 0;
   padding: 0;

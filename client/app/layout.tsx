@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-
+import { Montserrat } from "next/font/google";
 import "./globals.css";
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  weight: ["400", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Roman Fitness",
@@ -14,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>{children}</body>
+      <body className={`antialiased ${montserrat.variable}`}>{children}</body>
     </html>
   );
 }
