@@ -15,7 +15,7 @@
     conic-gradient(
       from var(--angle) at 50.24% 99.67%,
 
-      360de #00000030 0deg,
+      #00000030 0deg,
       #300f0130 270deg,
       #00000030 360deg
     );
