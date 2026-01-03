@@ -8,15 +8,9 @@
 }
 
 .workout-table-header {
-<<<<<<< HEAD
-  background-color: #00000099;
-  backdrop-filter: blur(10px);
-  border: 1px solid #121212;
-=======
   backdrop-filter: blur(10px);
   background-color: rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(18, 18, 18, 1);
->>>>>>> parent of b78aa6f (feat: Update styling for glass components and input borders for improved aesthetics)
 }
 
 .workout-table-body {
