@@ -11,15 +11,15 @@ export default function SuperSetRow({
   return (
     <tr className="relative">
       {/* Mobile/Tablet: Single column layout */}
-      <td className="block lg:table-cell py-3 px-4 lg:ps-5 lg:py-">
-        <div className="lg:hidden">
-          <div className="flex items-start gap-2 mb-3">
+      <td className="block lg:table-cell py-3 px-4 lg:ps-5 lg:py-2">
+        <section className="lg:hidden">
+          <article className="flex items-start gap-2">
             <span className="font-bold text-xl text-red-orange font-montserrat">
               SS
             </span>
-            <div className="flex-1">
+            <ul className="flex-1 list-none p-0 m-0">
               {superset.superset.map((lift, index) => (
-                <div key={lift.id} className="mb-3 last:mb-0">
+                <li key={lift.id} className="mb-3 last:mb-0">
                   <h3
                     className={`text-left font-semibold font-montserrat text-lg sm:text-xl mb-2 ${
                       index === superset.superset.length - 1
@@ -29,8 +29,8 @@ export default function SuperSetRow({
                   >
                     {lift.exercise}
                   </h3>
-                  <div className="flex gap-6 text-base sm:text-lg items-center">
-                    <div>
+                  <ul className="flex gap-6 text-base sm:text-lg items-center list-none p-0 m-0">
+                    <li>
                       <span className="text-gray-400 font-montserrat mr-2">
                         Reps:
                       </span>
@@ -43,8 +43,8 @@ export default function SuperSetRow({
                       >
                         {lift.reps}
                       </span>
-                    </div>
-                    <div>
+                    </li>
+                    <li>
                       <span className="text-gray-400 font-montserrat mr-2">
                         Tempo:
                       </span>
@@ -61,15 +61,15 @@ export default function SuperSetRow({
                           lift.tempo
                         )}
                       </span>
-                    </div>
-                  </div>
-                </div>
+                    </li>
+                  </ul>
+                </li>
               ))}
-            </div>
-          </div>
-        </div>
+            </ul>
+          </article>
+        </section>
         {/* Desktop: Keep original table layout */}
-        <div className="hidden lg:flex flex-row text-left">
+        <section className="hidden lg:flex flex-row text-left">
           <span className="font-bold text-2xl col text-red-orange font-montserrat">
             SS
           </span>
@@ -86,7 +86,7 @@ export default function SuperSetRow({
               </li>
             ))}
           </ul>
-        </div>
+        </section>
       </td>
       <td className="hidden lg:table-cell p-1 font-semibold text-lg">
         <ul className="pt-3 flex flex-col">
@@ -118,9 +118,9 @@ export default function SuperSetRow({
         </ul>
       </td>
       {!last && (
-        <div className="absolute bottom-0 left-0 w-full flex justify-center">
+        <td className="absolute bottom-0 left-0 w-full flex justify-center pointer-events-none">
           <hr className={styles["lift-row-divider"]} />
-        </div>
+        </td>
       )}
     </tr>
   );

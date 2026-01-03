@@ -22,6 +22,15 @@ function isValidDateString(value: unknown) {
   return !Number.isNaN(d.getTime());
 }
 
+function normalizeDateToUTC(value: string): string {
+  const d = new Date(value);
+  // Convert to UTC midnight
+  const utcDate = new Date(
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0)
+  );
+  return utcDate.toISOString();
+}
+
 function asString(v: unknown) {
   return typeof v === "string" ? v.trim() : "";
 }
@@ -88,16 +97,19 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const date = body?.date;
+    const dateRaw = body?.date;
     const liftsRaw = body?.lifts;
 
     //Validate Data before proceeding
-    if (!isValidDateString(date)) {
+    if (!isValidDateString(dateRaw)) {
       return NextResponse.json(
         { error: "Invalid or missing date" },
         { status: 400 }
       );
     }
+
+    // Normalize date to UTC midnight
+    const date = normalizeDateToUTC(dateRaw);
 
     const lifts = normalizeLifts(liftsRaw);
 

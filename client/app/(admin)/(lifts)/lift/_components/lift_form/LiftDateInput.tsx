@@ -7,7 +7,19 @@ export default function LiftDateInput({
 }: {
   initialDate?: string;
 }) {
-  const [date, setDate] = useState<Date>(new Date());
+  // Initialize with UTC date
+  const [date, setDate] = useState<Date>(() => {
+    if (initialDate) {
+      const d = new Date(initialDate);
+      return new Date(
+        Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+      );
+    }
+    const now = new Date();
+    return new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+    );
+  });
 
   const formatDate = (date: Date): string => {
     const options: Intl.DateTimeFormatOptions = {
@@ -15,16 +27,18 @@ export default function LiftDateInput({
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "UTC",
     };
     return date.toLocaleDateString("en-US", options);
   };
 
   const changeDate = (days: number) => {
     const newDate = new Date(date);
-    newDate.setDate(newDate.getDate() + days);
+    newDate.setUTCDate(newDate.getUTCDate() + days);
     setDate(newDate);
   };
 
+  // Format as YYYY-MM-DD in UTC
   const dateValue = date.toISOString().split("T")[0];
 
   return (
@@ -57,7 +71,10 @@ export default function LiftDateInput({
           type="date"
           name="date"
           value={dateValue}
-          onChange={(e) => setDate(new Date(e.target.value))}
+          onChange={(e) => {
+            const inputDate = new Date(e.target.value + "T00:00:00Z");
+            setDate(inputDate);
+          }}
           className="hidden"
         />
       </div>

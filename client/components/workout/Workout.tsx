@@ -9,10 +9,12 @@ import { s } from "framer-motion/client";
 
 type WorkoutProps = {
   initialLifts: (Lift | SuperSet)[];
+  todayStr?: string;
 };
 
 export default function Workout({ initialLifts }: WorkoutProps) {
   const { lifts, workoutId, loading } = useRealtimeWorkout(initialLifts);
+
   return (
     <div
       className={`${styles["workout-table-container"]} w-full overflow-x-auto shadow-2xl`}

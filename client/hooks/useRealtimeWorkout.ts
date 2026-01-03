@@ -1,7 +1,7 @@
+"use client";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Lift, SuperSet } from "@/types/lifts";
-import { getDates } from "@/utils/utils";
 
 type UseRealtimeWorkoutReturn = {
   lifts: (Lift | SuperSet)[];
@@ -21,6 +21,13 @@ export function useRealtimeWorkout(
   const isFetchingRef = useRef(false);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Update state when initialLifts change (from parent fetch)
+  useEffect(() => {
+    if (initialLifts && initialLifts.length > 0) {
+      setLifts(initialLifts);
+    }
+  }, [initialLifts]);
+
   // Memoize the update function to prevent recreation on every render
   const updateWorkoutData = useCallback(async () => {
     if (isFetchingRef.current) {
@@ -38,21 +45,22 @@ export function useRealtimeWorkout(
       setLoading(true);
 
       try {
-        console.log("Fetching updated workout data...");
+        // Get today's date in YYYY-MM-DD format (client timezone)
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(
+          now.getMonth() + 1
+        ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
-        const { today, tomorrow } = getDates();
         const { data, error } = await supabase
           .from("workouts")
           .select("*, workout_lifts(sequence, lift(*, superset(*)))")
-          .lte("workout_date", new Date(tomorrow).toISOString())
-          .gte("workout_date", new Date(today).toISOString())
+          .eq("workout_date", todayStr)
           .order("sequence", {
             foreignTable: "workout_lifts",
             ascending: true,
           });
 
         if (error) {
-          console.error("Error fetching lifts:", error);
           setLoading(false);
           isFetchingRef.current = false;
           return;
@@ -136,7 +144,6 @@ export function useRealtimeWorkout(
           table: "workouts",
         },
         (payload) => {
-          console.log("🔔 Workouts table changed:", payload);
           updateWorkoutData();
         }
       )

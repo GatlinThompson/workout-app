@@ -1,22 +1,24 @@
 "use server";
 
 import { createClient } from "../server";
-import { getDates } from "@/utils/utils";
 import { Lift, SuperSet } from "@/types/lifts";
 
-export const getWorkoutData = async (): Promise<{
+export const getWorkoutData = async (
+  dateStr?: string
+): Promise<{
   lifts: (Lift | SuperSet)[];
   workoutId?: string | number;
 } | null> => {
-  //GET Date for start at 00 hours
-  const { today, tomorrow } = getDates();
+  // Use provided date or default to today in YYYY-MM-DD format
+  const todayStr = dateStr || new Date().toISOString().split("T")[0];
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("workouts")
     .select("*, workout_lifts(sequence, lift(*, superset(*)))")
-    .lte("workout_date", new Date(tomorrow).toISOString())
-    .gte("workout_date", new Date(today).toISOString())
+    .eq("workout_date", `${todayStr}`)
     .order("sequence", { foreignTable: "workout_lifts", ascending: true });
+
+  console.log("Fetched workout data for date:", todayStr, data, error);
 
   if (error) {
     console.error("Error fetching lifts:", error);

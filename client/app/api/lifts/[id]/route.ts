@@ -21,6 +21,15 @@ function isValidDateString(value: unknown) {
   return !Number.isNaN(d.getTime());
 }
 
+function normalizeDateToUTC(value: string): string {
+  const d = new Date(value);
+  // Convert to UTC midnight
+  const utcDate = new Date(
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0)
+  );
+  return utcDate.toISOString();
+}
+
 function asString(v: unknown) {
   return typeof v === "string" ? v.trim() : "";
 }

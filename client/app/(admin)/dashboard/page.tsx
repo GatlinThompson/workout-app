@@ -29,9 +29,9 @@ export default async function Dashboard() {
 
       <Main>
         <DashboardHeader />
-        <GlassContainer>
-          <TodaysLift />
-        </GlassContainer>
+
+        <TodaysLift />
+
         <Button to="/lift">Create Lift</Button>
       </Main>
     </>

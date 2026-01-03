@@ -1,3 +1,5 @@
+"use client";
+
 import { Lift, SuperSet } from "@/types/lifts";
 
 export const titleCase = (str: string): string => {
@@ -9,11 +11,33 @@ export const wsSender = (type: string, payload: object): string => {
 };
 
 export const getDates = (): { today: Date; tomorrow: Date } => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const now = new Date();
 
-  const tomorrow = new Date(today);
-  tomorrow.setDate(today.getDate() + 1);
+  // Get today at 00:00:00 UTC
+  const today = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      0,
+      0,
+      0,
+      0
+    )
+  );
+
+  // Get tomorrow at 00:00:00 UTC
+  const tomorrow = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate() + 1,
+      0,
+      0,
+      0,
+      0
+    )
+  );
 
   return { today, tomorrow };
 };
