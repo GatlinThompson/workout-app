@@ -38,6 +38,7 @@ export default async function EditLiftPage({ params }: Props) {
     console.error("Error fetching lifts:", liftsError);
     notFound();
   }
+  console.log("workoutLifts:", workoutLifts);
 
   const liftsData = await Promise.all(
     (workoutLifts || []).map(async (wl: any) => {
@@ -47,7 +48,7 @@ export default async function EditLiftPage({ params }: Props) {
       if (lift.superset) {
         const { data: supersetLift } = await supabase
           .from("lifts")
-          .select("exercise, reps, tempo, id")
+          .select("exercise, reps, tempo, id, superset(*)")
           .eq("id", lift.superset)
           .single();
 
@@ -73,6 +74,8 @@ export default async function EditLiftPage({ params }: Props) {
       };
     })
   );
+
+  console.log("liftsData:", liftsData);
 
   return (
     <div>

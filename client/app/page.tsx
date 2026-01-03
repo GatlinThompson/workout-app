@@ -12,7 +12,7 @@ export default async function Home() {
     };
   return (
     <Main>
-      <GlassContainer className="h-200">
+      <GlassContainer>
         <WorkoutHeader />
         <Workout initialLifts={lifts} />
       </GlassContainer>

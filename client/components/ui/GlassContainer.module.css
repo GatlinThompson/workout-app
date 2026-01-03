@@ -10,7 +10,6 @@
   border-radius: 5px;
   box-shadow: rgba(0, 0, 0, 0.5) 0px 1rem 1.5rem 0rem;
 
-  padding: 20px;
   border: 1px solid transparent;
   background: linear-gradient(
       0deg,
@@ -28,6 +27,7 @@
   /* animation for rotating gradient border */
   animation: rotateGradient 40s linear infinite;
 }
+
 .glass-card::before {
   content: "";
   position: absolute;
@@ -40,6 +40,8 @@
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   z-index: 1;
+  pointer-events: none;
+  user-select: none;
 }
 
 .glass-card::after {
@@ -63,6 +65,8 @@
   -webkit-mask-composite: destination-out;
   z-index: 2;
   animation: rotateBorderGradient 40s linear infinite;
+  pointer-events: none;
+  user-select: none;
 }
 
 @keyframes rotateGradient {

@@ -24,9 +24,6 @@ type Props = {
 };
 
 export default function LiftInput({ sequence, initialData }: Props) {
-  const [superSetEnabled, setSuperSetEnabled] = useState(
-    !!initialData?.lift?.superSet
-  );
   const [liftObject, setLiftObject] = useState<LiftInputValue>(() => {
     if (initialData?.lift) {
       return {
@@ -48,11 +45,18 @@ export default function LiftInput({ sequence, initialData }: Props) {
     };
   });
 
+  const [superSetEnabled, setSuperSetEnabled] = useState(
+    !!initialData?.lift?.superSet
+  );
+
   // Keep liftObject.superSet in sync with the checkbox
+  // Only set to empty when toggling ON from OFF (don't clear existing data)
   useEffect(() => {
     setLiftObject((prev) => ({
       ...prev,
-      superSet: superSetEnabled ? { ...emptyLift } : null,
+      superSet: superSetEnabled
+        ? prev.superSet || { ...emptyLift } // Keep existing or create new
+        : null,
     }));
   }, [superSetEnabled]);
 

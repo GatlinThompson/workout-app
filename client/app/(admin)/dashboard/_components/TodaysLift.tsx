@@ -14,7 +14,7 @@ export default async function TodaysLift() {
       <Button to={workoutId ? `/lift/${workoutId}/edit` : "#"}>
         Edit Workout
       </Button>
-      <Workout initialLifts={lifts} />;
+      <Workout initialLifts={lifts} />
     </div>
   );
 }

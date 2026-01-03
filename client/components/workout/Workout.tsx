@@ -18,25 +18,39 @@ export default function Workout({ initialLifts }: WorkoutProps) {
       className={`${styles["workout-table-container"]} w-full overflow-x-auto shadow-2xl`}
     >
       <table className="w-full table-auto">
-        <thead className={`text-white ${styles["workout-table-header"]}`}>
+        <thead
+          className={`text-white ${styles["workout-table-header"]} hidden lg:table-header-group`}
+        >
           <tr className="">
-            <th className="text-3xl text-left ps-5 py-4 font-montserrat w-full">
+            <th className="text-4xl text-left ps-5 py-4 font-montserrat w-full">
               Exercise
             </th>
-            <th className="text-3xl text-left py-4 lg:min-w-[150px] xl:min-w-[300px] font-montserrat">
+            <th className="text-4xl text-left py-4 min-w-[150px] xl:min-w-[300px] font-montserrat">
               Reps
             </th>
-            <th className="text-3xl text-left py-4 lg:min-w-[150px] xl:min-w-[300px] font-montserrat">
+            <th className="text-4xl text-left py-4 min-w-[150px] xl:min-w-[300px] font-montserrat">
               Tempo
             </th>
           </tr>
         </thead>
-        <tbody>
-          {lifts.map((lift: Lift | SuperSet) => {
+        <tbody className={`text-white ${styles["workout-table-body"]}`}>
+          {lifts.map((lift: Lift | SuperSet, index: number) => {
             if (isSuperSet(lift)) {
-              return <SuperSetRow key={lift.id} {...lift} />;
+              return (
+                <SuperSetRow
+                  key={lift.id}
+                  superset={lift}
+                  last={index === lifts.length - 1}
+                />
+              );
             } else {
-              return <LiftRow key={lift.id} {...lift} />;
+              return (
+                <LiftRow
+                  key={lift.id}
+                  lift={lift}
+                  last={index === lifts.length - 1}
+                />
+              );
             }
           })}
         </tbody>
