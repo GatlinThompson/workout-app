@@ -36,7 +36,7 @@ export default function LiftRow({ lift, last }: { lift: Lift; last: boolean }) {
       </td>
 
       {!last && (
-        <td className="absolute bottom-0 left-0 w-full flex justify-center pointer-events-none">
+        <td className="absolute bottom-[-8px] left-0 w-full flex justify-center pointer-events-none">
           <hr className={styles["lift-row-divider"]} />
         </td>
       )}
