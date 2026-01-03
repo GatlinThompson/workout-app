@@ -1,8 +1,8 @@
-@property --angle {
+/*@property --angle {
   syntax: "<angle>";
   initial-value: 185deg;
   inherits: false;
-}
+}*/
 
 .glass-card {
   box-sizing: border-box;
@@ -13,7 +13,7 @@
   border: 1px solid transparent;
   background: linear-gradient(0deg, #00000052 0%, #00000052 100%),
     conic-gradient(
-      from var(--angle) at 50.24% 99.67%,
+      from 185deg at 50.24% 99.67%,
 
       #00000030 0deg,
       #300f0130 270deg,
@@ -22,7 +22,7 @@
 
   isolation: isolate;
   /* animation for rotating gradient border */
-  animation: rotateGradient 40s linear infinite;
+  /* animation: rotateGradient 40s linear infinite; */
 }
 
 .glass-card::before {
