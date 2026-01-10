@@ -1,12 +1,9 @@
-import React from "react";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/utils/getUser";
-import DashboardHeader from "./_components/DashboardHeader";
-import TodaysLift from "./_components/TodaysLift";
+import TodaysLift from "@/components/dashboard/todays_lift/TodaysLift";
 import Head from "next/head";
 import { Metadata } from "next";
-import Button from "@/components/ui/Button";
-import GlassContainer from "@/components/ui/GlassContainer";
+
 import Main from "@/components/layout/Main";
 
 export const metadata: Metadata = {

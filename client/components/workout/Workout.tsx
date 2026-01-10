@@ -5,7 +5,6 @@ import LiftRow from "./LiftRow";
 import SuperSetRow from "./SuperSetRow";
 import { useRealtimeWorkout } from "@/hooks/useRealtimeWorkout";
 import styles from "./Workout.module.css";
-import { s } from "framer-motion/client";
 
 type WorkoutProps = {
   initialLifts: (Lift | SuperSet)[];

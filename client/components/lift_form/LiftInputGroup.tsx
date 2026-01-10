@@ -5,7 +5,7 @@ import LiftInput from "./LiftInput";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { i } from "framer-motion/client";
-import GlassContainer from "../ui/GlassContainer";
+import GlassContainer from "../ui/glass_card/GlassContainer";
 import styles from "./LiftInput.module.css";
 import { BsX as Cross } from "react-icons/bs";
 

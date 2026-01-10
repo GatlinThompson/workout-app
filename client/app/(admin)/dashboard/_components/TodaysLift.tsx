@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import { useEffect, useState } from "react";
 import { Lift, SuperSet } from "@/types/lifts";
 import Loading from "@/components/ui/loading/Loading";
-import GlassContainer from "@/components/ui/GlassContainer";
+import GlassContainer from "@/components/ui/glass_card/GlassContainer";
 import WorkoutHeader from "@/components/workout/WorkoutHeader";
 
 export default function TodaysLift() {

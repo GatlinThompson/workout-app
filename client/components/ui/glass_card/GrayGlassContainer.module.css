@@ -1,0 +1,6 @@
+.gray-glass-card {
+  background-color: #1c1c1c33;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(18, 18, 18, 1);
+  border-bottom: 1px solid rgba(37, 36, 36, 1);
+}

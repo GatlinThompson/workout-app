@@ -1,7 +1,7 @@
-import { createClient } from "../server";
+import { createClient } from "../client";
 
 export const getUser = async (): Promise<boolean> => {
-  const supabase = await createClient();
+  const supabase = createClient();
   const { data } = await supabase.auth.getClaims();
 
   if (data) return true;
