@@ -28,6 +28,7 @@ export default async function Home() {
           </div>
         )}
       </GlassContainer>
+      <p>{date.toFormattedString()}</p>
     </Main>
   );
 }
