@@ -38,7 +38,6 @@ export default async function EditLiftPage({ params }: Props) {
     console.error("Error fetching lifts:", liftsError);
     notFound();
   }
-  console.log("workoutLifts:", workoutLifts);
 
   const liftsData = await Promise.all(
     (workoutLifts || []).map(async (wl: any) => {
@@ -74,8 +73,6 @@ export default async function EditLiftPage({ params }: Props) {
       };
     })
   );
-
-  console.log("liftsData:", liftsData);
 
   return (
     <div>

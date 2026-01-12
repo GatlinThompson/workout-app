@@ -51,14 +51,16 @@ export default async function TodaysLift({ className }: TodaysLiftProps) {
         </GlassSubTitle>
 
         <div className="flex flex-col flex-1">
-          <Button
-            to={`/lift/${workoutId ? workoutId + "/edit" : ""}`}
-            className="text-right me-1 mb-1"
-            roundedTop={true}
-            bordered={true}
-          >
-            {lifts.length > 0 ? "Edit Workout" : "Create Workout"}
-          </Button>
+          {new Date().getDay() !== 0 && (
+            <Button
+              to={`/lift/${workoutId ? workoutId + "/edit" : ""}`}
+              className="text-right me-1 mb-1"
+              roundedTop={true}
+              bordered={true}
+            >
+              {lifts.length > 0 ? "Edit Workout" : "Create Workout"}
+            </Button>
+          )}
           <GrayGlassContainer className="grow">
             <TodaysWorkout lifts={lifts} />
           </GrayGlassContainer>
