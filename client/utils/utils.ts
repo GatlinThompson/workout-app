@@ -45,3 +45,20 @@ export const getDates = (): { today: Date; tomorrow: Date } => {
 export const isSuperSet = (lift: Lift | SuperSet): lift is SuperSet => {
   return (lift as SuperSet).superset !== undefined;
 };
+
+export const toShortLongString = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+
+export const toFormattedString = (date: Date): string => {
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+};

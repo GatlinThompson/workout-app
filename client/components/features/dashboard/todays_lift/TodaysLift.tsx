@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import styles from "./TodaysLift.module.css";
 import GlassContainer from "@/components/ui/glass_card/GlassContainer";
 import GlassTitle from "@/components/ui/glass_card/GlassTitle";
@@ -8,7 +10,9 @@ import { getWorkoutData } from "@/lib/supabase/utils/lifts";
 import { Lift, SuperSet } from "@/types/lifts";
 import Button from "@/components/ui/Button";
 import TodaysWorkout from "./TodaysWorkout";
-import { cookies } from "next/headers";
+import { toShortLongString, toFormattedString } from "@/utils/utils";
+import Loading from "@/components/ui/loading/Loading";
+import Spinner from "@/components/ui/Spinner";
 
 type TodaysLiftProps = {
   className?: string;
@@ -20,19 +24,26 @@ type TodaysLiftProps = {
  * @param className optional additional class names
  * @returns the today's lift component for the admin dashboard
  */
-export default async function TodaysLift({ className }: TodaysLiftProps) {
-  const cookieStore = await cookies();
-  const date = cookieStore.get("localeTime")?.value;
+export default function TodaysLift({ className }: TodaysLiftProps) {
+  const [lifts, setLifts] = useState<(Lift | SuperSet)[]>([]);
+  const [workoutId, setWorkoutId] = useState<string | number | undefined>(
+    undefined
+  );
+  const [isLoading, setIsLoading] = useState(true);
+  const today = new Date();
 
-  const newDate = date ? new Date(date) : new Date();
-
-  const {
-    lifts = [] as (Lift | SuperSet)[],
-    workoutId = undefined as number | undefined,
-  } = (await getWorkoutData(date)) || {
-    lifts: [],
-    workoutId: undefined,
-  };
+  useEffect(() => {
+    async function loadWorkout() {
+      setIsLoading(true);
+      const data = await getWorkoutData(toFormattedString(today));
+      if (data) {
+        setLifts(data.lifts || []);
+        setWorkoutId(data.workoutId);
+      }
+      setIsLoading(false);
+    }
+    loadWorkout();
+  }, []);
 
   return (
     <section className={`${className} ${styles.section} flex flex-col`}>
@@ -47,22 +58,33 @@ export default async function TodaysLift({ className }: TodaysLiftProps) {
           position="center"
           className="mb-8"
         >
-          {newDate.toShortLongString()}
+          {toShortLongString(today)}
         </GlassSubTitle>
 
         <div className="flex flex-col flex-1">
-          {new Date().getDay() !== 0 && (
+          {today.getDay() !== 0 && (
             <Button
               to={`/lift/${workoutId ? workoutId + "/edit" : ""}`}
               className="text-right me-1 mb-1"
               roundedTop={true}
               bordered={true}
             >
-              {lifts.length > 0 ? "Edit Workout" : "Create Workout"}
+              {!isLoading
+                ? lifts.length > 0
+                  ? "Edit Workout"
+                  : "Create Workout"
+                : "Loading..."}
             </Button>
           )}
           <GrayGlassContainer className="grow">
-            <TodaysWorkout lifts={lifts} />
+            {isLoading ? (
+              <div className="w-full h-full justify-center items-center flex flex-col gap-2">
+                <Spinner className="h-8 w-8" />
+                <p>Loading workout...</p>
+              </div>
+            ) : (
+              <TodaysWorkout lifts={lifts} />
+            )}
           </GrayGlassContainer>
         </div>
       </GlassContainer>

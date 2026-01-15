@@ -9,24 +9,16 @@ type UseRealtimeWorkoutReturn = {
   loading: boolean;
 };
 
-export function useRealtimeWorkout(
-  initialLifts: (Lift | SuperSet)[],
-  initialWorkoutId?: string | number | undefined
-): UseRealtimeWorkoutReturn {
-  const [lifts, setLifts] = useState<(Lift | SuperSet)[]>(initialLifts);
-  const [workoutId, setWorkoutId] = useState(initialWorkoutId);
-  const [loading, setLoading] = useState(false);
+export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
+  const [lifts, setLifts] = useState<(Lift | SuperSet)[]>([]);
+  const [workoutId, setWorkoutId] = useState<string | number | undefined>(
+    undefined
+  );
+  const [loading, setLoading] = useState(true);
 
   const supabase = useMemo(() => createClient(), []);
   const isFetchingRef = useRef(false);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Update state when initialLifts change (from parent fetch)
-  useEffect(() => {
-    if (initialLifts && initialLifts.length > 0) {
-      setLifts(initialLifts);
-    }
-  }, [initialLifts]);
 
   // Memoize the update function to prevent recreation on every render
   const updateWorkoutData = useCallback(async () => {
@@ -110,6 +102,11 @@ export function useRealtimeWorkout(
       }
     }, 300);
   }, [supabase]);
+
+  // Initial data fetch on mount
+  useEffect(() => {
+    updateWorkoutData();
+  }, [updateWorkoutData]);
 
   useEffect(() => {
     const channel = supabase

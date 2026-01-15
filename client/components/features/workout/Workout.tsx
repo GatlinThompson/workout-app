@@ -5,18 +5,23 @@ import LiftRow from "./LiftRow";
 import SuperSetRow from "./SuperSetRow";
 import { useRealtimeWorkout } from "@/hooks/useRealtimeWorkout";
 import styles from "./Workout.module.css";
+import Spinner from "@/components/ui/Spinner";
 
-type WorkoutProps = {
-  initialLifts: (Lift | SuperSet)[];
-  todayStr?: string;
-};
+export default function Workout() {
+  const { lifts, workoutId, loading } = useRealtimeWorkout();
 
-export default function Workout({ initialLifts }: WorkoutProps) {
-  const { lifts, workoutId, loading } = useRealtimeWorkout(initialLifts);
-
-  if (lifts.length === 0 && !loading) {
+  if (loading) {
     return (
-      <div className="p-6 h-90 lg:h-150 text-light-gray  text-xl text-center flex items-center justify-center">
+      <div className="p-6 h-90 lg:h-150 text-light-gray text-xl text-center flex items-center justify-center flex-col gap-2">
+        <Spinner className="h-8 w-8" />
+        <p>Loading workout...</p>
+      </div>
+    );
+  }
+
+  if (lifts.length === 0) {
+    return (
+      <div className="p-6 h-90 lg:h-150 text-light-gray text-xl text-center flex items-center justify-center">
         No workout scheduled for today.
       </div>
     );
