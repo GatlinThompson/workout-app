@@ -40,7 +40,7 @@ export default function DailyLift({ day, index = 0 }: DailyLiftProps) {
           <div className="text-2xl font-bold text-white">
             {day.exerciseCount + " Lifts" || "No Workout Made"}
           </div>
-          <Button to={liftLink} className="mt-2 px-4 py-1 text-lg">
+          <Button bordered to={liftLink} className="mt-3 px-5 py-2 text-lg">
             {day.hasWorkout ? "View Workout" : "Create Workout"}
           </Button>
         </div>
