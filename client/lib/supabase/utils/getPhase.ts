@@ -10,8 +10,6 @@ export const getPhase = async (): Promise<PhaseInfo | null> => {
     .limit(1)
     .single();
 
-  console.log("Fetched phase data:", data, error);
-
   const phaseInfo = data as PhaseInfo | null;
 
   if (error) {

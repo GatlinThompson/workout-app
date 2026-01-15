@@ -137,7 +137,6 @@ export async function POST(request: NextRequest) {
       .select("id")
       .eq("workout_date", date);
 
-    console.log(existingWorkout);
     if (existingError) {
       console.error("Error checking existing workout:", existingError);
       return NextResponse.json(

@@ -102,8 +102,6 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     const removedLifts = JSON.parse(removedLiftsRaw || "[]");
 
-    console.log("Removed Lifts:", removedLifts);
-
     const seqSet = new Set(lifts.map((l) => l.sequence));
     if (seqSet.size !== lifts.length) {
       return NextResponse.json(

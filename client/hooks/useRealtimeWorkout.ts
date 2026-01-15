@@ -15,6 +15,8 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
     undefined
   );
   const [loading, setLoading] = useState(true);
+  const isInitialLoadRef = useRef(true);
+  const currentLiftIdsRef = useRef<Set<number>>(new Set());
 
   const supabase = useMemo(() => createClient(), []);
   const isFetchingRef = useRef(false);
@@ -34,7 +36,11 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
     // Debounce the actual fetch to batch rapid changes
     debounceTimerRef.current = setTimeout(async () => {
       isFetchingRef.current = true;
-      setLoading(true);
+
+      // Only set loading state on initial load
+      if (isInitialLoadRef.current) {
+        setLoading(true);
+      }
 
       try {
         // Get today's date in YYYY-MM-DD format (client timezone)
@@ -89,14 +95,37 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
               }
             }) || [];
 
+          // Track all lift IDs in the current workout
+          const liftIds = new Set<number>();
+          data[0].workout_lifts?.forEach((item: any) => {
+            liftIds.add(item.lift.id);
+            if (item.lift.superset) {
+              liftIds.add(item.lift.superset.id);
+            }
+          });
+          currentLiftIdsRef.current = liftIds;
+
           setWorkoutId(data[0].id);
           setLifts(updatedLifts);
+        } else {
+          // No workout found for today
+          setLifts([]);
+          setWorkoutId(undefined);
+          currentLiftIdsRef.current = new Set();
         }
-        setLoading(false);
+
+        // Mark initial load as complete
+        if (isInitialLoadRef.current) {
+          isInitialLoadRef.current = false;
+          setLoading(false);
+        }
       } catch (error) {
         console.error("Error updating workout data:", error);
 
-        setLoading(false);
+        if (isInitialLoadRef.current) {
+          isInitialLoadRef.current = false;
+          setLoading(false);
+        }
       } finally {
         isFetchingRef.current = false;
       }
@@ -128,6 +157,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
           event: "*",
           schema: "public",
           table: "workout_lifts",
+          filter: `workout=eq.${workoutId}`,
         },
         (payload) => {
           updateWorkoutData();
@@ -139,6 +169,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
           event: "*",
           schema: "public",
           table: "workouts",
+          filter: `id=eq.${workoutId}`,
         },
         (payload) => {
           updateWorkoutData();
@@ -153,7 +184,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
       }
       supabase.removeChannel(channel);
     };
-  }, [supabase, updateWorkoutData]);
+  }, [supabase, updateWorkoutData, workoutId]);
 
   return { lifts, workoutId, loading };
 }
