@@ -23,9 +23,15 @@ export default function Modal() {
             transition={{ duration: 0.2 }}
             className={`${styles.modal} rounded-lg py-2 px-3 shadow-lg z-50 relative max-w-2xl w-full mx-2`}
           >
-            <div className="flex justify-between items-center">
-              <h2 className="text-2xl font-bold ">{modalContent?.title}</h2>
-              <button type="button" onClick={closeModal}>
+            <div className="flex justify-center items-center py-2">
+              <h2 className="text-2xl font-bold text-center">
+                {modalContent?.title}
+              </h2>
+              <button
+                type="button"
+                onClick={closeModal}
+                className="absolute top-2 right-3"
+              >
                 <div>
                   <Cross className="w-12 h-12 text-red-orange hover:text-red-800" />
                 </div>

@@ -33,7 +33,7 @@ export default async function WorkoutHeader({
   return (
     <section className={`${className} flex flex-col`}>
       <div
-        className={`flex flex-col md:flex-row gap-4 justify-between ${styles["workout-table-header"]} p-3  md:p-4 rounded-lg`}
+        className={` relative flex flex-col md:flex-row gap-4 justify-between ${styles["workout-table-header"]} p-3  md:p-4 rounded-lg`}
       >
         <div className="flex flex-col ">
           <h1 className="font-bold font-montserrat text-lg lg:text-3xl">
@@ -41,7 +41,7 @@ export default async function WorkoutHeader({
           </h1>
           <WorkoutWeekDay phaseDate={phase?.phase_started || null} />
         </div>
-        <div className="grow flex justify-center hidden md:flex lg:hidden xl:flex md:ps-26 lg:ps-30">
+        <div className="grow flex justify-center hidden md:flex lg:hidden xl:flex  absolute left-0 right-0 mx-auto">
           <Link href={pathname}>
             <Image
               src={Logo}
