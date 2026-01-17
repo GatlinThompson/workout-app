@@ -32,6 +32,8 @@ export default function LiftDateInput({
     stringDate.setDate(stringDate.getDate() + 1);
   }
 
+  console.log("Date Value:", dateValue);
+
   return (
     <div
       className={`flex items-center gap-4 mx-2 p-4 glass-black ${styles["input-border"]} rounded-lg`}
@@ -39,13 +41,9 @@ export default function LiftDateInput({
       <div className="flex-1 text-center">
         <p className="text-lg font-semibold">{toShortLongString(stringDate)}</p>
         <input
-          type="date"
+          type="hidden"
           name="date"
-          value={dateValue}
-          onChange={(e) => {
-            const inputDate = new Date(e.target.value + "T00:00:00Z");
-            setDate(inputDate);
-          }}
+          defaultValue={dateValue}
           className="hidden"
           style={{ display: "none" }}
         />

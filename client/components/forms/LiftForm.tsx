@@ -1,14 +1,11 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import LiftInput from "./LiftInput";
 import { useState } from "react";
 import LiftInputGroup from "./LiftInputGroup";
 import LiftDateInput from "./LiftDateInput";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/Spinner";
-
-type LiftRow = { id: string };
 
 const makeId = () => crypto.randomUUID();
 
@@ -37,6 +34,8 @@ export default function LiftForm({
 
     const url = isEditing ? `/api/lifts/${workoutId}` : "/api/lifts";
     const method = isEditing ? "PUT" : "POST";
+
+    console.log("date", formData);
 
     const res = await fetch(url, {
       method,
