@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
-export const GET = async (req: NextRequest, res: NextResponse) => {
+export async function GET(_req: NextRequest) {
   const supabase = await createClient();
+
   const { data, error } = await supabase
     .from("phase_management")
     .select("phase(level, phase_number, percentage), start_date, end_date, id")
@@ -15,5 +16,6 @@ export const GET = async (req: NextRequest, res: NextResponse) => {
       { status: 500 },
     );
   }
-  return NextResponse.json({ phases: data }, { status: 200 });
-};
+
+  return NextResponse.json({ phases: data ?? [] }, { status: 200 });
+}
