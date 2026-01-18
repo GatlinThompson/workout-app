@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function ModalContent() {
   return (
     <div className="bg-white rounded-lg p-6 shadow-lg z-50 z-51">

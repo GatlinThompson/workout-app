@@ -1,8 +1,6 @@
 "use client";
 
 import Button from "@/components/ui/Button";
-import { p } from "framer-motion/client";
-import { BiTrash, BiPencil } from "react-icons/bi";
 
 export type PhaseInfo = {
   phase: {
@@ -43,7 +41,6 @@ export default function Phase({
       onUpdate();
     } else {
       const error = await response.json();
-      console.error("Error extending phase week:", error);
       alert(`Error: ${error.error || "Failed to extend phase week"}`);
     }
   };
@@ -56,7 +53,6 @@ export default function Phase({
       onUpdate();
     } else {
       const error = await response.json();
-      console.error("Error reducing phase week:", error);
       alert(`Error: ${error.error || "Failed to reduce phase week"}`);
     }
   };
@@ -71,7 +67,7 @@ export default function Phase({
 
   return (
     <div className="flex w-full gap-3 pb-2 items-center">
-      <div className="grow ">
+      <div className="grow">
         <h2 className="md:text-lg font-bold">
           Phase {phase.phase.phase_number} - {phase.phase.level}
         </h2>

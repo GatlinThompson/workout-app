@@ -25,7 +25,7 @@ function normalizeDateToUTC(value: string): string {
   const d = new Date(value);
   // Convert to UTC midnight
   const utcDate = new Date(
-    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0)
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0),
   );
   return utcDate.toISOString();
 }
@@ -52,7 +52,7 @@ function normalizeLifts(raw: unknown): LiftInput[] {
     .filter(Boolean)
     .filter(
       (x) =>
-        typeof x.sequence === "number" && x.lift && typeof x.lift === "object"
+        typeof x.sequence === "number" && x.lift && typeof x.lift === "object",
     )
     .map((x) => ({
       sequence: x.sequence,
@@ -87,7 +87,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (!isValidDateString(date)) {
       return NextResponse.json(
         { error: "Invalid or missing date" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,7 +96,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (lifts.length === 0) {
       return NextResponse.json(
         { error: "No valid lifts provided" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -106,7 +106,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (seqSet.size !== lifts.length) {
       return NextResponse.json(
         { error: "Duplicate sequence values detected" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -130,10 +130,9 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       .eq("id", id);
 
     if (updateWorkoutError) {
-      console.error("Error updating workout:", updateWorkoutError);
       return NextResponse.json(
         { error: "Failed to update workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -144,10 +143,9 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       .eq("workout", id);
 
     if (fetchError) {
-      console.error("Error fetching old lifts:", fetchError);
       return NextResponse.json(
         { error: "Failed to fetch existing lifts" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -160,10 +158,9 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       .eq("workout", id);
 
     if (deleteJoinError) {
-      console.error("Error deleting old workout_lifts:", deleteJoinError);
       return NextResponse.json(
         { error: "Failed to delete old workout lifts" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -186,7 +183,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         .in("id", oldLiftIds);
 
       if (deleteLiftsError) {
-        console.error("Error deleting old lifts:", deleteLiftsError);
+        // Log error but continue
       }
 
       // Delete superset lifts
@@ -210,15 +207,14 @@ export async function PUT(request: NextRequest, context: RouteContext) {
             exercise: l.lift.exercise,
             reps: l.lift.reps,
             tempo: l.lift.tempo ?? "",
-          }))
+          })),
         )
         .select("id");
 
       if (normalsError || !insertedNormals) {
-        console.error("Normal lifts insert error:", normalsError);
         return NextResponse.json(
           { error: "Failed to insert lifts" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -227,7 +223,7 @@ export async function PUT(request: NextRequest, context: RouteContext) {
           workout: parseInt(id),
           lift: row.id,
           sequence: normalLifts[i].sequence,
-        }))
+        })),
       );
     }
 
@@ -245,10 +241,9 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         .single();
 
       if (ssError || !ssRow) {
-        console.error("Superset secondary insert error:", ssError);
         return NextResponse.json(
           { error: "Failed to insert superset secondary lift" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -264,10 +259,9 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         .single();
 
       if (mainError || !mainRow) {
-        console.error("Superset main insert error:", mainError);
         return NextResponse.json(
           { error: "Failed to insert superset main lift" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -283,22 +277,20 @@ export async function PUT(request: NextRequest, context: RouteContext) {
       .insert(workoutLiftRows);
 
     if (joinError) {
-      console.error("workout_lifts insert error:", joinError);
       return NextResponse.json(
         { error: "Failed to link lifts to workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json(
       { message: "Workout updated", workoutId: id },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
-    console.error("PUT /lifts/[id] unexpected error:", error);
     return NextResponse.json(
       { error: "Failed to process PUT request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -323,10 +315,9 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       .eq("workout", id);
 
     if (liftsFetchError) {
-      console.error("Error fetching lifts for workout:", liftsFetchError);
       return NextResponse.json(
         { error: "Failed to fetch lifts for workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
     const liftIds = (existingLifts || []).map((wl: any) => wl.lift);
@@ -346,10 +337,9 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
         .delete()
         .in("id", liftIds);
       if (deleteLiftsError) {
-        console.error("Error deleting lifts:", deleteLiftsError);
         return NextResponse.json(
           { error: "Failed to delete lifts" },
-          { status: 500 }
+          { status: 500 },
         );
       }
       // Delete superset lifts
@@ -359,10 +349,9 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
           .delete()
           .in("id", supersetIds);
         if (deleteSupersetsError) {
-          console.error("Error deleting superset lifts:", deleteSupersetsError);
           return NextResponse.json(
             { error: "Failed to delete superset lifts" },
-            { status: 500 }
+            { status: 500 },
           );
         }
       }
@@ -373,17 +362,15 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
       .delete()
       .eq("id", id);
     if (deleteWorkoutError) {
-      console.error("Error deleting workout:", deleteWorkoutError);
       return NextResponse.json(
         { error: "Failed to delete workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
   } catch (error) {
-    console.error("DELETE /lifts/[id] unexpected error:", error);
     return NextResponse.json(
       { error: "Failed to process DELETE request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

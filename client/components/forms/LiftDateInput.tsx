@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import styles from "./LiftInput.module.css";
 import { toShortLongString } from "@/utils/utils";
 
@@ -12,16 +12,11 @@ export default function LiftDateInput({
   // Initialize with UTC date
   const [date, setDate] = useState<Date>(() => {
     if (initialDate) {
-      console.log("Initial Date:", initialDate);
       const date = new Date(initialDate);
       date.setDate(date.getDate() + 1);
-
       return date;
     }
-
-    const now = new Date();
-    console.log("Hello " + now.toLocaleDateString());
-    return now;
+    return new Date();
   });
 
   let dateValue = date.toLocaleDateString().split("T")[0];
@@ -31,8 +26,6 @@ export default function LiftDateInput({
     stringDate = new Date(initialDate);
     stringDate.setDate(stringDate.getDate() + 1);
   }
-
-  console.log("Date Value:", dateValue);
 
   return (
     <div

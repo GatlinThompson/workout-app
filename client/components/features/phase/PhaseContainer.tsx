@@ -1,7 +1,7 @@
 "use client";
 import Phase, { PhaseInfo } from "./Phase";
 import Divider from "@/components/ui/divider/Divider";
-import { use, useMemo, useState } from "react";
+import { useState } from "react";
 import { fetchPhases } from "./PhaseChanger";
 
 export default function PhaseContainer({ phases }: { phases: PhaseInfo[] }) {

@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode } from "react";
 
 type GlassTitleProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   weight?: "normal" | "bold" | "light" | "semibold";
   size?: "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";

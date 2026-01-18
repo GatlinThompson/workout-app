@@ -1,10 +1,6 @@
-import React from "react";
+import { ReactNode } from "react";
 
-export default function ModalContainer({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ModalContainer({ children }: { children: ReactNode }) {
   return (
     <div className="z-50 w-screen h-screen fixed top-0 left-0 flex items-center justify-center">
       {children}

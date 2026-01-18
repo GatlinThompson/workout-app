@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useModal } from "@/contexts/ModalContext";
 
 export default function ModalCloseButton() {

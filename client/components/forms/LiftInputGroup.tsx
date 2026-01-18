@@ -4,8 +4,6 @@ import Button from "@/components/ui/Button";
 import LiftInput from "./LiftInput";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { i } from "framer-motion/client";
-import GlassContainer from "../ui/glass_card/GlassContainer";
 import styles from "./LiftInput.module.css";
 import { BsX as Cross } from "react-icons/bs";
 
@@ -73,7 +71,7 @@ export default function LiftInputGroup({ initialLifts }: Props) {
               >
                 <div className="flex items-center justify-between mb-1">
                   <h2 className="text-3xl font-semibold font-montserrat">
-                    Lift {index !== undefined ? index + 1 : ""}
+                    Lift {index + 1}
                   </h2>
                   <div>
                     {lifts.length > 1 && (

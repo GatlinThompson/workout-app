@@ -10,7 +10,6 @@ export async function GET(_req: NextRequest) {
     .order("start_date", { ascending: true });
 
   if (error) {
-    console.error("Error fetching phases:", error);
     return NextResponse.json(
       { error: "Failed to fetch phases" },
       { status: 500 },

@@ -24,7 +24,6 @@ export const PUT = async (
   }
 
   if (error) {
-    console.error("Error extending phase:", error);
     return NextResponse.json(
       { error: "Failed to extend phase" },
       { status: 500 },
@@ -35,15 +34,12 @@ export const PUT = async (
   const newEndDate = new Date(phaseToExtend.end_date);
   newEndDate.setDate(newEndDate.getDate() + 7); // Extend by 7 days
 
-  console.log("New end date:", newEndDate.toISOString());
-
   const { data: updatedData, error: updateError } = await supabase
     .from("phase_management")
     .update({ end_date: newEndDate.toISOString() })
     .eq("id", id);
 
   if (updateError) {
-    console.error("Error updating phase:", updateError);
     return NextResponse.json(
       { error: "Failed to update phase" },
       { status: 500 },
@@ -79,14 +75,11 @@ export const PUT = async (
   await Promise.all(updatePromises);
 
   if (subsequentError) {
-    console.error("Error updating subsequent phases:", subsequentError);
     return NextResponse.json(
       { error: "Failed to update subsequent phases" },
       { status: 500 },
     );
   }
-
-  console.log("Subsequent phases:", subsequentPhases);
 
   return NextResponse.json({ success: true }, { status: 200 });
 };

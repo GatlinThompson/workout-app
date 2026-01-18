@@ -4,7 +4,7 @@ import { createClient } from "../server";
 import { Lift, SuperSet } from "@/types/lifts";
 
 export const getWorkoutData = async (
-  date?: string
+  date?: string,
 ): Promise<{
   lifts: (Lift | SuperSet)[];
   workoutId?: string | number;
@@ -20,7 +20,6 @@ export const getWorkoutData = async (
     .order("sequence", { foreignTable: "workout_lifts", ascending: true });
 
   if (error) {
-    console.error("Error fetching lifts:", error);
     return null;
   } else if (data && data.length > 0) {
     const lifts: (SuperSet | Lift)[] = data[0].workout_lifts?.map(
@@ -51,7 +50,7 @@ export const getWorkoutData = async (
             tempo: item.lift.tempo,
           };
         }
-      }
+      },
     );
 
     //Return workout

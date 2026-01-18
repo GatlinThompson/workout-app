@@ -12,7 +12,7 @@ type UseRealtimeWorkoutReturn = {
 export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
   const [lifts, setLifts] = useState<(Lift | SuperSet)[]>([]);
   const [workoutId, setWorkoutId] = useState<string | number | undefined>(
-    undefined
+    undefined,
   );
   const [loading, setLoading] = useState(true);
   const isInitialLoadRef = useRef(true);
@@ -46,7 +46,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
         // Get today's date in YYYY-MM-DD format (client timezone)
         const now = new Date();
         const todayStr = `${now.getFullYear()}-${String(
-          now.getMonth() + 1
+          now.getMonth() + 1,
         ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 
         const { data, error } = await supabase
@@ -120,8 +120,6 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
           setLoading(false);
         }
       } catch (error) {
-        console.error("Error updating workout data:", error);
-
         if (isInitialLoadRef.current) {
           isInitialLoadRef.current = false;
           setLoading(false);
@@ -149,7 +147,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
         },
         (payload) => {
           updateWorkoutData();
-        }
+        },
       )
       .on(
         "postgres_changes",
@@ -161,7 +159,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
         },
         (payload) => {
           updateWorkoutData();
-        }
+        },
       )
       .on(
         "postgres_changes",
@@ -173,7 +171,7 @@ export function useRealtimeWorkout(): UseRealtimeWorkoutReturn {
         },
         (payload) => {
           updateWorkoutData();
-        }
+        },
       )
       .subscribe();
 

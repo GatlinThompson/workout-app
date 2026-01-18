@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Button from "@/components/ui/Button";
 import DailyLift from "./DailyLift";
 import { getWorkoutData } from "@/lib/supabase/utils/lifts";
@@ -22,7 +22,7 @@ type DayLift = {
 
 export default function WeeklyLifts({ className }: WeeklyLiftsProps) {
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(
-    getWeekStart(new Date())
+    getWeekStart(new Date()),
   );
   const [weekDays, setWeekDays] = useState<DayLift[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +50,7 @@ export default function WeeklyLifts({ className }: WeeklyLiftsProps) {
 
       // Fetch all workout data in parallel
       const workoutPromises = datePromises.map(({ fullDate }) =>
-        getWorkoutData(fullDate)
+        getWorkoutData(fullDate),
       );
 
       const workoutResults = await Promise.all(workoutPromises);
@@ -113,7 +113,7 @@ export default function WeeklyLifts({ className }: WeeklyLiftsProps) {
           </div>
         </GlassContainer>
       )),
-    []
+    [],
   );
 
   return (

@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./Workout.module.css";
 import Logo from "@/public/roman-logo.png";
 import Image from "next/image";
@@ -6,7 +5,6 @@ import { getPhase } from "@/lib/supabase/utils/getPhase";
 import { PhaseInfo } from "@/types/phase";
 import { calculateWeekAndDay } from "@/utils/phase";
 import Button from "@/components/ui/Button";
-import { div, p } from "framer-motion/client";
 import PhaseChanger from "@/components/features/phase/PhaseChanger";
 import WorkoutWeekDay from "./WorkoutWeekDay";
 import Link from "next/dist/client/link";

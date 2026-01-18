@@ -1,6 +1,5 @@
 import Button from "@/components/ui/Button";
 import GlassContainer from "@/components/ui/glass_card/GlassContainer";
-import React from "react";
 
 type DailyLiftProps = {
   day: {

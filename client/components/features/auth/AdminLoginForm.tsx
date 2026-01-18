@@ -68,7 +68,6 @@ export default function AdminLoginForm() {
       }
       setLoading(false);
     } catch (error) {
-      console.error("An error occurred during login:", error);
       setLoginError("An error occurred during login:");
       setLoading(false);
     }

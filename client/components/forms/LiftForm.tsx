@@ -35,8 +35,6 @@ export default function LiftForm({
     const url = isEditing ? `/api/lifts/${workoutId}` : "/api/lifts";
     const method = isEditing ? "PUT" : "POST";
 
-    console.log("date", formData);
-
     const res = await fetch(url, {
       method,
       body: JSON.stringify({
@@ -54,7 +52,6 @@ export default function LiftForm({
       setLoading(false);
     } else {
       const error = await res.json();
-      console.error("Error saving workout:", error);
       alert(`Error: ${error.error || "Failed to save workout"}`);
       setLoading(false);
     }

@@ -14,7 +14,6 @@ export const getPhase = async (): Promise<PhaseInfo | null> => {
   const phaseInfo = data as PhaseInfo | null;
 
   if (error) {
-    console.error("Error fetching phase:", error);
     return null;
   } else if (phaseInfo) {
     return phaseInfo;

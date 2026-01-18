@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import styles from "./TodaysLift.module.css";
 import GlassContainer from "@/components/ui/glass_card/GlassContainer";
 import GlassTitle from "@/components/ui/glass_card/GlassTitle";
@@ -27,7 +27,7 @@ type TodaysLiftProps = {
 export default function TodaysLift({ className }: TodaysLiftProps) {
   const [lifts, setLifts] = useState<(Lift | SuperSet)[]>([]);
   const [workoutId, setWorkoutId] = useState<string | number | undefined>(
-    undefined
+    undefined,
   );
   const [isLoading, setIsLoading] = useState(true);
   const today = new Date();

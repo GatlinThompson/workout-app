@@ -1,5 +1,3 @@
-import { div } from "framer-motion/client";
-import React from "react";
 import styles from "./ToggleButton.module.css";
 
 type ToggleButtonProps = {

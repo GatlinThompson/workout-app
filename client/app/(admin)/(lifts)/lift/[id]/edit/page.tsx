@@ -1,4 +1,3 @@
-import React from "react";
 import LiftForm from "@/components/forms/LiftForm";
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
@@ -29,13 +28,12 @@ export default async function EditLiftPage({ params }: Props) {
       `
       sequence,
       lift:lifts(id, exercise, reps, tempo, superset)
-    `
+    `,
     )
     .eq("workout", id)
     .order("sequence");
 
   if (liftsError) {
-    console.error("Error fetching lifts:", liftsError);
     notFound();
   }
 
@@ -71,7 +69,7 @@ export default async function EditLiftPage({ params }: Props) {
           superSet: superSetData,
         },
       };
-    })
+    }),
   );
 
   return (

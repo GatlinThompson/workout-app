@@ -26,7 +26,7 @@ function normalizeDateToUTC(value: string): string {
   const d = new Date(value);
   // Convert to UTC midnight
   const utcDate = new Date(
-    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0)
+    Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), 0, 0, 0, 0),
   );
   return utcDate.toISOString();
 }
@@ -54,7 +54,7 @@ function normalizeLifts(raw: unknown): LiftInput[] {
     .filter(Boolean)
     .filter(
       (x) =>
-        typeof x.sequence === "number" && x.lift && typeof x.lift === "object"
+        typeof x.sequence === "number" && x.lift && typeof x.lift === "object",
     )
     .map((x) => ({
       sequence: x.sequence,
@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
     if (!isValidDateString(dateRaw)) {
       return NextResponse.json(
         { error: "Invalid or missing date" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     if (lifts.length === 0) {
       return NextResponse.json(
         { error: "No valid lifts provided" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     if (seqSet.size !== lifts.length) {
       return NextResponse.json(
         { error: "Duplicate sequence values detected" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -138,15 +138,14 @@ export async function POST(request: NextRequest) {
       .eq("workout_date", date);
 
     if (existingError) {
-      console.error("Error checking existing workout:", existingError);
       return NextResponse.json(
         { error: "Failed to check existing workout" },
-        { status: 500 }
+        { status: 500 },
       );
     } else if (existingWorkout && existingWorkout.length > 0) {
       return NextResponse.json(
         { error: "Workout for this date already exists" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -158,10 +157,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (workoutError || !workout) {
-      console.error("Workout insert error:", workoutError);
       return NextResponse.json(
         { error: "Failed to create workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -181,15 +179,14 @@ export async function POST(request: NextRequest) {
             exercise: l.lift.exercise,
             reps: l.lift.reps,
             tempo: l.lift.tempo ?? "",
-          }))
+          })),
         )
         .select("id");
 
       if (normalsError || !insertedNormals) {
-        console.error("Normal lifts insert error:", normalsError);
         return NextResponse.json(
           { error: "Failed to insert lifts" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -198,7 +195,7 @@ export async function POST(request: NextRequest) {
           workout: workout.id,
           lift: row.id,
           sequence: normalLifts[i].sequence,
-        }))
+        })),
       );
     }
 
@@ -218,10 +215,9 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (ssError || !ssRow) {
-        console.error("Superset secondary insert error:", ssError);
         return NextResponse.json(
           { error: "Failed to insert superset secondary lift" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -238,10 +234,9 @@ export async function POST(request: NextRequest) {
         .single();
 
       if (mainError || !mainRow) {
-        console.error("Superset main insert error:", mainError);
         return NextResponse.json(
           { error: "Failed to insert superset main lift" },
-          { status: 500 }
+          { status: 500 },
         );
       }
 
@@ -257,22 +252,20 @@ export async function POST(request: NextRequest) {
       .insert(workoutLiftRows);
 
     if (joinError) {
-      console.error("workout_lifts insert error:", joinError);
       return NextResponse.json(
         { error: "Failed to link lifts to workout" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
     return NextResponse.json(
       { message: "Workout created", workoutId: workout.id },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error("POST /workouts unexpected error:", error);
     return NextResponse.json(
       { error: "Failed to process POST request" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -22,7 +22,6 @@ export const PUT = async (
     return NextResponse.json({ error: "Phase not found" }, { status: 404 });
   }
   if (error) {
-    console.error("Error reducing phase:", error);
     return NextResponse.json(
       { error: "Failed to reduce phase" },
       { status: 500 },
@@ -30,9 +29,7 @@ export const PUT = async (
   }
   const phaseToReduce = data[0];
   const newEndDate = new Date(phaseToReduce.end_date);
-
   newEndDate.setDate(newEndDate.getDate() - 7); // Reduce by 7 days
-  console.log("New end date:", newEndDate.toISOString());
 
   if (newEndDate <= new Date(phaseToReduce.start_date)) {
     return NextResponse.json(
@@ -46,7 +43,6 @@ export const PUT = async (
     .update({ end_date: newEndDate.toISOString() })
     .eq("id", id);
   if (updateError) {
-    console.error("Error updating phase:", updateError);
     return NextResponse.json(
       { error: "Failed to update phase" },
       { status: 500 },
