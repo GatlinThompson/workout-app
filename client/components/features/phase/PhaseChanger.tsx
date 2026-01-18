@@ -3,16 +3,15 @@
 import Button from "@/components/ui/Button";
 import { useModal } from "@/contexts/ModalContext";
 import PhaseContainer from "./PhaseContainer";
-import { p } from "framer-motion/client";
+
+export const fetchPhases = async () => {
+  const response = await fetch("/api/phases");
+  const data = await response.json();
+  return data.phases;
+};
 
 export default function PhaseChanger() {
   const { openModal } = useModal();
-
-  const fetchPhases = async () => {
-    const response = await fetch("/api/phases");
-    const data = await response.json();
-    return data.phases;
-  };
 
   const handleOpenPhaseChanger = async () => {
     const phases = await fetchPhases();
